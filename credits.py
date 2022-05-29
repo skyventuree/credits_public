@@ -321,8 +321,10 @@ while time.time() - 2 < time_menu:
 
     time.sleep(0.01)
 
-
-os.system("clear")
+if os.name == "nt":
+    os.system("cls")
+elif os.name == "posix":
+    os.system("clear")
 
 time_start = time.time()
 last_update = time.time()

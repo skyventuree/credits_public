@@ -214,7 +214,7 @@ title = am.Scene(
             192, am.Generator.at_beat(192),
             am.Generator.no_create(),
             lambda g, b: canvas.set_string(
-                0, Vector2(1, 4), "running pure Python 3.6", Fore.CYAN + Style.NORMAL
+                0, Vector2(1, 4), "running pure Python 3", Fore.CYAN + Style.NORMAL
             ),
             am.Generator.no_request()
         ),

@@ -1,3 +1,7 @@
+print("WARNING: PLEASE MAKE SURE YOU HAVE PREPARED THE AUDIO BEFOREHAND.")
+print("This fork does not play audio. You have to manually play and sync the audio yourself.")
+print("Require screen size of 81x27 (27 lines, 81 columns) for the best experience.")
+
 from animation_functions import debug_info
 from CLIRender.classes import enable_ansi
 from colorama import Fore, Style
@@ -6,7 +10,6 @@ import keyboard
 import time
 import os
 import random
-from just_playback import Playback
 
 from animation_scenes import all_scenes, canvas
 from string_defs import data_strings
@@ -282,29 +285,8 @@ controller = am.SceneManager((*all_scenes, counter), (
     am.Event(6508, am.Event.swap_scene("clear"))
 ))
 
-
-# class MixerWrapper:
-#     def __init__(self):
-#         self.is_paused = False
-#
-#     def toggle_music(self):
-#         if self.is_paused:
-#             pygame.mixer.music.unpause()
-#             self.is_paused = False
-#         else:
-#             pygame.mixer.music.pause()
-#             self.is_paused = True
-#
-#
-# ffwing = MixerWrapper()
-
 paused_this_frame = False
 ff_this_frame = False
-
-filename = "media/credits.wav"
-
-playback = Playback()
-playback.load_file(filename)
 
 print("\033[1;1Hskips\n\n1 | start\n2 | title\n3 | funding\n4 | loading\n5 | break\n6 | final")
 
@@ -340,27 +322,15 @@ while time.time() - 2 < time_menu:
     time.sleep(0.01)
 
 
-os.system("cls")
-
-# wave_obj = sa.WaveObject.from_wave_file(filename)
-# play_obj = wave_obj.play()
-playback.play()
-playback.seek(skip_by)
+os.system("clear")
 
 time_start = time.time()
 last_update = time.time()
 prev_pos = 0
 
-while playback.active:
-    # (17.06.21) might have broken, i used a -1 beat offset here to try and sync up everything better
-    # since i originally used 1-indexed beats
-    #
-    # (24.06.21) update chat it didnt break
-
-    # next_beat = (time.time() - time_start - offset) > ((beat - 1) * delay)
-    next_beat = (playback.curr_pos - offset) > ((beat - 1) * delay)
+while True:
+    next_beat = (time.time() - time_start - offset) > ((beat - 1) * delay)
     need_update = time.time() - (1/30) > last_update
-    # print(pygame.mixer.music.get_pos())
 
     if next_beat:
         controller.request_next()
@@ -374,11 +344,6 @@ while playback.active:
     if need_update:
         if keyboard.is_pressed("p"):
             if not paused_this_frame:
-                if playback.paused:
-                    playback.resume()
-                else:
-                    playback.pause()
-
                 paused_this_frame = True
         else:
             paused_this_frame = False
@@ -386,25 +351,13 @@ while playback.active:
         if keyboard.is_pressed(","):
             if not ff_this_frame:
                 ff_this_frame = True
-            else:
-                playback.seek(playback.curr_pos + delay * 3)
 
         if keyboard.is_pressed("."):
             if not ff_this_frame:
                 ff_this_frame = True
-            else:
-                playback.seek(playback.curr_pos + delay * 7)
 
         if keyboard.is_pressed("/"):
             if not ff_this_frame:
                 ff_this_frame = True
-            else:
-                playback.seek(playback.curr_pos + delay * 15)
-        # else:
-        #     # print("n", ff_this_frame, pygame.mixer.music.get_pos() + prev_pos, prev_pos)
-        #     if ff_this_frame:
-        #         # print("unpausing now")
-        #         ff_this_frame = False
-        #         ffwing.toggle_music()
 
         last_update = time.time()
